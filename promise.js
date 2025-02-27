@@ -12,14 +12,30 @@ function memoize(fn) {
     cache.fn.push(fn);
   }
   return function (...args) {
-    let fnindex = cache.fn.indexOf(fn);
+    let fnIndex = cache.fn.indexOf(fn);
     let argsKey = JSON.stringify(args);
     let valuesIndex = cache.values.indexOf(argsKey);
-    if (fnindex !== -1 && valuesIndex !== -1) {
+    if (fnIndex !== -1 && valuesIndex !== -1) {
+      //нужно добавить проверку на undefined в ress
+      //бывают ситуации, когда функция кэширована
+      // значения кэшированы, но результат конкретно у этой функции и этих значений еще не вычислялся
+      //в таком случае .res еще не существует, и нужно создать объект новый с этой же функцией и values
+      // и вычислить результат
       const ress = cache.results.find(
-        (elem) => elem.fnId == fnindex && elem.valuesId == valuesIndex
+        (elem) => elem.fnId == fnIndex && elem.valuesId == valuesIndex
       );
-      return ress.res;
+      if (!ress || ress == undefined) {
+        let resId = cache.results.length;
+        cache.results[resId] = {
+          index: resId,
+          fnId: fnIndex,
+          valuesId: valuesIndex,
+          res: fn(...args),
+        };
+        return cache.results[resId].res;
+      } else {
+        return ress.res;
+      }
     }
     if (cache.values.includes(argsKey) == false) {
       cache.values.push(argsKey);
