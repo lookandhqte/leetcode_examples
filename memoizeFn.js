@@ -1,4 +1,7 @@
+//2623. Memoize
+
 "use strict";
+
 const cache = {
   fn: [],
   results: [],
@@ -32,15 +35,14 @@ function memoize(fn) {
   };
 }
 
-// let callCount = 0;
-// const memoizedFn = memoize(function (a, b) {
-//   callCount += 1;
-//   return a + b;
-// });
-// memoizedFn(2, 2); // 5, кэшировалось
-// memoizedFn(2, 2); // повторный вызов
-// console.log(callCount);
-// memoizedFn(1, 2);
-// console.log(callCount);
-// //["call","call","getCallCount","call","getCallCount"]
-// //[[2,2],[2,2],[],[1,2],[]]
+//Пример использования
+let callCount = 0;
+const memoizedFn = memoize(function (a, b) {
+  callCount += 1;
+  return a + b;
+});
+memoizedFn(2, 3); // 5, кэшировалось
+memoizedFn(2, 3); // 5, значения взяты из кэша, функция повторно не вызывалась
+console.log(callCount); // 1
+memoizedFn(1, 2); // 3, кэшировалось
+console.log(callCount); // 2
